@@ -27,6 +27,16 @@
 
             </tbody>
         </table>
+
+
+        <div class="input-group mt-5">
+            <div class="input-group-prepend w-100">
+                <span class="input-group-text" id="basic-addon1">URL</span>
+                <input type="text" id="url" class="w-100">
+            </div>
+            <input type="button" value="Set URL" onclick="setUrl()" class="btn btn-primary mt-1 w-100">
+        </div>
+
     </div>
 
 
@@ -39,40 +49,48 @@
 
     <script>
 
-        function updateTable(data, values) {
+        function updateTable(data) {
             const tbody = document.getElementById("tableList");
             tbody.innerHTML = "";
             var p = "";
-            data.data.forEach((value, index) => {
+            data.data.forEach(value => {
                 p += "<tr>";
-                    p += '<td scope="col">' + value.name + "</td>";
-                    p += '<td scope="col">' + portsString(value.ports) + "</td>";
-                   
+                p += '<td scope="col">' + value.name + "</td>";
+                p += '<td scope="col">' + portsString(value.ports) + "</td>";
+
                 p += "</tr>";
             })
             tbody.insertAdjacentHTML("beforeend", p);
         }
 
 
-        function portsString(ports){
+        function portsString(ports) {
             var port = ""
-            let data = Object.keys(ports).map((value) =>{
-                if (Array.isArray(ports[value])){
+            let data = Object.keys(ports).map((value) => {
+                if (Array.isArray(ports[value])) {
                     let puertoHost = ports[value][0].HostPort
                     let puertoDocker = value;
                     port = port + puertoHost + ":" + puertoDocker + " ---- "
-                }else{
+                } else {
                     port = port + value + " ---- ";
-                } 
+                }
             })
-            return port.slice(0, -5); 
+            return port.slice(0, -5);
         }
 
-        fetch("http://127.0.0.1:4000/").then((res) => {
-            res
-                .json()
+        var input_url = document.getElementById("url")
+        function setUrl() {
+            localStorage.setItem("URL", input_url.value);
+            input_url.value = input_url.value
+        }
+
+        var url = localStorage.getItem("URL") ? localStorage.getItem("URL") : "http://127.0.0.1:4000";
+        input_url.value = url
+
+        fetch(url).then((res) => {
+            res.json()
                 .then((data) => {
-                    updateTable(data, ['nombre', 'ports']);
+                    updateTable(data);
                 })
                 .catch((err) => {
                     console.log("ERROR: " + err);
