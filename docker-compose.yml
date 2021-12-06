@@ -9,6 +9,7 @@ services:
       - 4000:5000
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
+    restart: unless-stopped
   web-server:
     container_name: docker-container-list-web
     build: 
@@ -16,5 +17,6 @@ services:
       context: ./
     ports:
       - 8083:80
+    restart: unless-stopped
       
   
